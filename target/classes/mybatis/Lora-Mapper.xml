@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.matthew.lora.mapper.LoraMapper" >
+    <resultMap id="lora" type="com.matthew.lora.domian.Lora">
+        <id property="id" column="id"/>
+        <result property="sensorId" column="sensor_id"/>
+        <result property="datetime" column="datetime"/>
+        <result property="temperature" column="temperature"/>
+        <result property="humidity" column="humidity"/>
+        <result property="dewdrop" column="dewdrop"/>
+        <result property="RSSI" column="RSSI"/>
+    </resultMap>
+
+    <sql id="table_name">
+        lora
+    </sql>
+
+    <sql id="full_columns">
+        id,
+        sensor_id,
+        datetime,
+        temperature,
+        humidity,
+        dewdrop,
+        RSSI
+    </sql>
+
+    <sql id="insert_columns">
+        sensor_id,
+        datetime,
+        temperature,
+        humidity,
+        dewdrop,
+        RSSI
+    </sql>
+
+    <sql id="update_columns">
+
+    </sql>
+    <insert id="save">
+        INSERT INTO <include refid="table_name"/>
+        (
+        <include refid="insert_columns"/>
+        ) VALUES (
+        #{ sensorId},
+        #{datetime},
+        #{temperature},
+        #{humidity},
+        #{dewdrop},
+        #{RSSI}
+        )
+        <selectKey resultType="int" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="search" resultMap="lora">
+        select <include refid="full_columns"/>
+        from <include refid="table_name"/>
+        <where>
+            <if test="id != 0">
+                id = #{id}
+            </if>
+            <if test="sensorId != 0">
+              AND  sensor_id = #{sensorId}
+            </if>
+            <if test="datetime != null">
+              AND  datetime = #{datetime}
+            </if>
+            <if test="temperature != 0">
+                AND  temperature = #{temperature}
+            </if>
+            <if test="humidity != 0">
+                AND  humidity = #{humidity}
+            </if>
+
+            <if test="dewdrop != 0">
+                AND  dewdrop = #{dewdrop}
+            </if>
+            <if test="RSSI != 0">
+                AND   RSSI = #{RSSI}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="delete">
+        delete from <include refid="table_name"/> where id = #{id,jdbcType=NUMERIC}
+    </delete>
+
+</mapper>
